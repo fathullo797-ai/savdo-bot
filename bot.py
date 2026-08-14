@@ -339,3 +339,26 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+from aiohttp import web
+import os
+
+async def handle(request):
+    return web.Response(text="Bot is running!")
+
+app = web.Application()
+app.add_routes([web.get('/', handle)])
+
+async def start_web_server():
+    runner = web.AppRunner(app)
+    await runner.setup()
+    port = int(os.environ.get("PORT", 8080))
+    site = web.TCPSite(runner, "0.0.0.0", port)
+    await site.start()
+
+# Bot ishga tushganda web-serverni ham qo'shib yuborish uchun:
+if __name__ == '__main__':
+    import asyncio
+    loop = asyncio.get_event_loop()
+    loop.create_task(start_web_server())
+    # Bu yerda botingizning asosiy ishga tushish qismi turishi kerak (masalan, executor)
